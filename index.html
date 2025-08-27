@@ -157,12 +157,13 @@
         <div class="nav-links">
           <a href="#explorar">Explorar</a>
           <a href="#comprar">Comprar</a>
-          <a href="#publicar" class="btn primary">Publicar</a>
+          <a href="#publicar" class="btn primary" data-action="open-publish">Publicar</a>
           <div class="menu">
             <button class="btn" aria-haspopup="true" aria-expanded="false">Mi cuenta ▾</button>
             <div class="dropdown" role="menu" aria-label="Menú de cuenta">
               <a href="#datos">Datos de mi cuenta</a>
               <a href="#pedidos">Mis pedidos</a>
+              <a href="#" data-action="signin">Iniciar sesión</a>
               <div class="row">
                 <span>Vender activado</span>
                 <label class="switch">
@@ -170,7 +171,7 @@
                   <span class="knob"></span>
                 </label>
               </div>
-              <a href="#salir">Cerrar sesión</a>
+              <a href="#" data-action="signout" style="display:none">Cerrar sesión</a>
             </div>
           </div>
         </div>
@@ -185,23 +186,23 @@
         <h1>Estilo que dura.</h1>
         <p>Sube tu producto, dale un precio, y explora la moda.</p>
         <div class="filters" role="group" aria-label="Filtros rápidos">
-          <button class="chip active">Todo</button>
-          <button class="chip">Vestidos</button>
-          <button class="chip">Faldas</button>
-          <button class="chip">Accesorios</button>
-          <button class="chip">Pants/Jeans</button>
-          <button class="chip">Shorts</button>
-          <button class="chip">Deportes</button>
-          <button class="chip">Calzado</button>
-          <button class="chip">Sweaters/Hoodies</button>
+          <button class="chip active" data-category="Todo">Todo</button>
+          <button class="chip" data-category="Vestidos">Vestidos</button>
+          <button class="chip" data-category="Faldas">Faldas</button>
+          <button class="chip" data-category="Accesorios">Accesorios</button>
+          <button class="chip" data-category="Pants/Jeans">Pants/Jeans</button>
+          <button class="chip" data-category="Shorts">Shorts</button>
+          <button class="chip" data-category="Deportes">Deportes</button>
+          <button class="chip" data-category="Calzado">Calzado</button>
+          <button class="chip" data-category="Sweaters/Hoodies">Sweaters/Hoodies</button>
         </div>
         <div style="display:flex; gap:10px; flex-wrap:wrap">
-          <a href="#publicar" class="btn primary">Publicar ahora</a>
+          <a href="#publicar" class="btn primary" data-action="open-publish">Publicar ahora</a>
           <a href="#explorar" class="btn ghost">Explorar productos</a>
         </div>
       </div>
 
-      <!-- Collage 3 imágenes (reemplaza URLs por las tuyas si quieres) -->
+      <!-- Collage 3 imágenes -->
       <div class="hero-visuals">
         <img loading="lazy" alt="Look urbano 1"
           src="https://n.nordstrommedia.com/is/image/nordstrom/nike_0825_v04667a_005-1.jpeg?crop=1524.8%3A1906%2Coffset-x61.346%2Coffset-y50" />
@@ -260,7 +261,7 @@
       alert(on ? 'Modo vendedor ACTIVADO' : 'Modo vendedor DESACTIVADO');
     });
 
-    // Datos demo de productos (remplaza con tu backend cuando quieras)
+    // Datos demo de productos (render inicial si no hay datos)
     const demoProducts = [
       {title:'Vestido Negro Zara', price:220, location:'Monterrey', img:'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQCZPhXC3nwGNv3Ei0gD0rLeGAGuEww9g64_BmVqxQnAlCmgXixVvP9tptKe9voB012DIOVNX4fT4VOXR6j4XDxMdGtClj07hHXcq1vS_Jl43La9YaopG81wN3woXviHq16_PtGSc0&usqp=CAc'},
       {title:'Tenis running', price:890, location:'Monterrey', img:'https://n.nordstrommedia.com/it/4ffddbf8-5993-4255-9f08-b397660e3ef9.jpeg?h=333&w=750'},
@@ -286,37 +287,41 @@
     }
     render(demoProducts);
 
-    // Filtros demo
+    // Filtros demo (visual)
     document.querySelectorAll('.chip').forEach(ch=>{
       ch.addEventListener('click',()=>{
         document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
         ch.classList.add('active');
-        // En backend real: consultar por categoría
       });
     });
   </script>
+
+  <!-- Conexión con Firebase -->
   <script type="module" src="./app.js"></script>
+
+  <!-- Diálogo de publicación -->
   <dialog id="publishDialog">
-  <form id="publishForm" method="dialog">
-    <h3>Publicar producto</h3>
-    <label>Título <input name="title" required></label>
-    <label>Precio (MXN) <input name="price" type="number" min="0" step="1" required></label>
-    <label>Categoría
-      <select name="category" required>
-        <option>Vestidos</option><option>Faldas</option><option>Accesorios</option>
-        <option>Pants/Jeans</option><option>Shorts</option><option>Deportes</option>
-        <option>Calzado</option><option>Sweaters/Hoodies</option>
-      </select>
-    </label>
-    <label>WhatsApp (solo números, ej. 52155...) <input name="whatsapp" pattern="[0-9]+" required></label>
-    <label>Descripción <textarea name="description" rows="3"></textarea></label>
-    <label>Foto(s) <input name="images" type="file" accept="image/*" multiple required></label>
-    <menu style="display:flex;gap:.5rem;justify-content:flex-end">
-      <button type="button" id="cancelPublish">Cancelar</button>
-      <button type="submit">Publicar</button>
-    </menu>
-    <p id="publishMsg" style="margin-top:.5rem"></p>
-  </form>
-</dialog>
+    <form id="publishForm" method="dialog">
+      <h3>Publicar producto</h3>
+      <label>Título <input name="title" required></label>
+      <label>Precio (MXN) <input name="price" type="number" min="0" step="1" required></label>
+      <label>Categoría
+        <select name="category" required>
+          <option>Vestidos</option><option>Faldas</option><option>Accesorios</option>
+          <option>Pants/Jeans</option><option>Shorts</option><option>Deportes</option>
+          <option>Calzado</option><option>Sweaters/Hoodies</option>
+        </select>
+      </label>
+      <label>WhatsApp (solo números, ej. 52155...) <input name="whatsapp" pattern="[0-9]+" required></label>
+      <label>Descripción <textarea name="description" rows="3"></textarea></label>
+      <label>Foto(s) <input name="images" type="file" accept="image/*" multiple required></label>
+      <menu style="display:flex;gap:.5rem;justify-content:flex-end">
+        <button type="button" id="cancelPublish">Cancelar</button>
+        <button type="submit">Publicar</button>
+      </menu>
+      <p id="publishMsg" style="margin-top:.5rem"></p>
+    </form>
+  </dialog>
 </body>
 </html>
+

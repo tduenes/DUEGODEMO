@@ -296,5 +296,27 @@
     });
   </script>
   <script type="module" src="./app.js"></script>
+  <dialog id="publishDialog">
+  <form id="publishForm" method="dialog">
+    <h3>Publicar producto</h3>
+    <label>Título <input name="title" required></label>
+    <label>Precio (MXN) <input name="price" type="number" min="0" step="1" required></label>
+    <label>Categoría
+      <select name="category" required>
+        <option>Vestidos</option><option>Faldas</option><option>Accesorios</option>
+        <option>Pants/Jeans</option><option>Shorts</option><option>Deportes</option>
+        <option>Calzado</option><option>Sweaters/Hoodies</option>
+      </select>
+    </label>
+    <label>WhatsApp (solo números, ej. 52155...) <input name="whatsapp" pattern="[0-9]+" required></label>
+    <label>Descripción <textarea name="description" rows="3"></textarea></label>
+    <label>Foto(s) <input name="images" type="file" accept="image/*" multiple required></label>
+    <menu style="display:flex;gap:.5rem;justify-content:flex-end">
+      <button type="button" id="cancelPublish">Cancelar</button>
+      <button type="submit">Publicar</button>
+    </menu>
+    <p id="publishMsg" style="margin-top:.5rem"></p>
+  </form>
+</dialog>
 </body>
 </html>
